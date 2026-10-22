@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b1b1b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Anilha">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Anilha — diário de cargas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#1b1b1b;--card:#262626;--mut:#333;--bd:#3b3b3b;--tx:#fafafa;--dim:#9a9a9a;--br:#ccff00;--brt:#1b1b1b;--bad:#ff6b6b;color-scheme:dark}
+:root.light{--bg:#f7f7f7;--card:#fff;--mut:#ececec;--bd:#dcdcdc;--tx:#1b1b1b;--dim:#666;--br:#7ac70c;--brt:#111;--bad:#c62828;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase;margin:0;letter-spacing:.01em}
+h1{font-size:28px;font-weight:800;color:var(--br)}h2{font-size:26px;font-weight:800}h3{font-size:20px;font-weight:700}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:calc(8px + env(safe-area-inset-top)) 16px 8px}
+main{max-width:560px;margin:0 auto;padding:16px 16px calc(150px + env(safe-area-inset-bottom))}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--bg);border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:env(safe-area-inset-bottom)}
+nav button{background:none;border:0;border-top:3px solid transparent;margin-top:-1px;color:var(--dim);font:700 18px 'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase;padding:14px 0}
+nav button.on{color:var(--tx);border-top-color:var(--br)}
+#timer{position:fixed;left:0;right:0;bottom:calc(52px + env(safe-area-inset-bottom));z-index:6;display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--br);color:var(--brt);overflow:hidden;font-weight:700}
+#timer.done{background:var(--tx);color:var(--bg)}
+#timer i{position:absolute;inset:0 auto 0 0;background:rgba(0,0,0,.2)}
+#timer b,#timer button{position:relative}
+#timer button{background:none;border:1px solid currentColor;color:inherit;padding:6px 12px;font:inherit}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(120px + env(safe-area-inset-bottom));z-index:9;background:var(--tx);color:var(--bg);padding:12px}
+.card{background:var(--card);border:1px solid var(--bd);padding:14px;margin:0 0 12px}
+.hd,.row,.ex{display:flex;justify-content:space-between;gap:8px}.hd{align-items:baseline}.row{align-items:center;margin:8px 0}
+.dim{color:var(--dim);font-size:13px}.obs{margin:.4em 0;font-size:14px}.card p{margin:.4em 0}
+input,select{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--bd);padding:12px;font:inherit;border-radius:0}
+:is(input,select,button):focus-visible{outline:2px solid var(--br);outline-offset:1px}
+.in{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.in .btn{grid-column:1/-1}
+form{display:grid;gap:8px;margin-top:10px}.g3{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:8px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}form .g2{margin:0}
+.btn{background:var(--br);color:var(--brt);border:1px solid var(--br);padding:12px 16px;font:700 13px Inter,sans-serif;text-transform:uppercase;letter-spacing:.08em}
+.btn.ghost{background:none;color:var(--tx);border-color:var(--bd)}.btn.sm{padding:8px 12px;font-size:12px}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:12px 0;padding-bottom:4px}
+.chip{flex:none;border:1px solid var(--bd);background:none;color:var(--tx);padding:9px 14px;font:inherit}
+.chip.on{background:var(--br);color:var(--brt);border-color:var(--br)}
+.sets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.set{background:var(--mut);color:var(--tx);border:0;padding:7px 10px;font-size:13px}
+.lnk{background:none;border:0;color:var(--dim);padding:6px;font:inherit;font-size:13px}.bad{color:var(--bad)}
+.ex{padding:10px 0;border-top:1px solid var(--bd)}.acts{display:flex;flex:none;align-items:flex-start}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}.stats b{display:block;font:800 26px 'Barlow Condensed','Arial Narrow',sans-serif}
+svg{width:100%;height:auto}svg line{stroke:var(--bd)}svg text{fill:var(--dim);font-size:10px}svg polyline{fill:none;stroke:var(--br);stroke-width:2.5}svg circle{fill:var(--br)}
+.hist{list-style:none;margin:8px 0 0;padding:0}.hist li{padding:8px 0;border-top:1px solid var(--bd);font-size:14px}
+.empty{text-align:center;padding:48px 8px}.empty p{color:var(--dim);margin:8px 0 20px}
+</style>
+</head>
+<body>
+<header><h1>Anilha</h1><button class="lnk" data-act="theme" aria-label="Alternar tema claro e escuro">Tema</button></header>
+<main id="app"></main>
+<div id="timer" hidden><b></b><i></i><button data-act="stop">Parar</button></div>
+<div id="toast" hidden></div>
+<input type="file" id="file" accept="application/json" hidden>
+<nav>
+<button data-act="go" data-id="treinar">Treinar</button>
+<button data-act="go" data-id="evolucao">Evolução</button>
+<button data-act="go" data-id="ficha">Ficha</button>
+</nav>
+<script>
+const K='anilha:v1',$=s=>document.querySelector(s);
+const def=()=>({fichas:[],ativa:null,treino:null,logs:[],tema:'dark'});
+let S;try{S={...def(),...JSON.parse(localStorage.getItem(K))}}catch{S=def()}
+let tab='treinar',metric='max',exSel=null,form=null,T=null,tm,hide;
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch{toast('Sem espaço para salvar. Exporte um backup.')}};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+const today=()=>new Date().toLocaleDateString('sv'),fd=d=>d.slice(8)+'/'+d.slice(5,7);
+const num=v=>{const n=parseFloat(String(v).replace(',','.'));return isFinite(n)?n:NaN};
+const fk=kg=>kg===0?'corporal':kg+'kg',rd=v=>Math.round(v*10)/10;
+const F=()=>S.fichas.find(f=>f.id===S.ativa);
+const curTreino=f=>f.treinos.find(x=>x.id===S.treino)||f.treinos[0];
+const go=t=>{tab=t;render();scrollTo(0,0)};
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600)}
+const empty=(t,p,b,id)=>`<div class="empty"><h2>${t}</h2><p>${p}</p>${b?`<button class="btn" data-act="go" data-id="${id}">${b}</button>`:''}</div>`;
+
+/* ---------- dados ---------- */
+function sessions(k){const m={};for(const l of S.logs)if(l.k===k)(m[l.d]??=[]).push(l);for(const d in m)m[d].sort((a,b)=>a.t-b.t);return m}
+const e1rm=l=>l.r>1?l.kg*(1+l.r/30):l.kg;
+const MET={max:['Carga máx.','kg',a=>Math.max(...a.map(l=>l.kg))],vol:['Volume','kg',a=>a.reduce((s,l)=>s+l.kg*l.r,0)],rm:['1RM estimado','kg',a=>Math.max(...a.map(e1rm))],rep:['Repetições','reps',a=>Math.max(...a.map(l=>l.r))]};
+
+/* ---------- Treinar ---------- */
+function vTreinar(){
+  const f=F();
+  if(!f||!f.treinos.length)return empty('Sem ficha ativa','Cadastre o treino que o seu personal passou.','Cadastrar ficha','ficha');
+  const t=curTreino(f);
+  return `<div class="chips">${f.treinos.map(x=>`<button class="chip${x.id===t.id?' on':''}" data-act="pick" data-id="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`+
+    (t.exercicios.length?t.exercicios.map(card).join(''):empty('Treino vazio','Adicione os exercícios na aba Ficha.','Abrir ficha','ficha'));
+}
+function card(e){
+  const k=norm(e.nome),ss=sessions(k),td=ss[today()]||[],prev=Object.keys(ss).filter(d=>d<today()).sort().pop(),pl=prev?ss[prev]:[];
+  const ref=td.length?td[td.length-1]:pl[pl.length-1];
+  return `<section class="card" data-ex="${e.id}"><div class="hd"><h3>${esc(e.nome)}</h3><span class="dim">${esc(e.series)}×${esc(e.reps)}${e.descanso?` · ${e.descanso}s`:''}</span></div>
+${e.obs?`<p class="obs">${esc(e.obs)}</p>`:''}
+<p class="dim">${prev?`Última vez (${fd(prev)}): ${pl.map(l=>`${l.kg}×${l.r}`).join(' · ')}`:'Primeira vez neste exercício'}</p>
+<div class="sets">${td.map((l,i)=>`<button class="set" data-act="del" data-id="${l.id}" aria-label="Remover série ${i+1}">${i+1}ª: ${fk(l.kg)} × ${l.r} ✕</button>`).join('')}</div>
+<div class="in"><input inputmode="decimal" placeholder="kg (0 = corporal)" aria-label="Carga em kg" value="${ref?ref.kg:''}"><input inputmode="numeric" placeholder="reps" aria-label="Repetições" value="${ref?ref.r:''}"><button class="btn" data-act="reg">Registrar série</button></div></section>`;
+}
+function reg(c){
+  const e=curTreino(F()).exercicios.find(x=>x.id===c.dataset.ex),[a,b]=c.querySelectorAll('input'),kg=num(a.value),r=parseInt(b.value);
+  if(!(kg>=0&&kg<=700)||!(r>0&&r<=200))return toast('Informe a carga (0 = peso corporal) e as repetições.');
+  S.logs.push({id:uid(),k:norm(e.nome),n:e.nome,d:today(),kg,r,t:Date.now()});save();
+  if(e.descanso>0)startTimer(e.descanso);
+  render();
+}
+function startTimer(s){clearInterval(tm);clearTimeout(hide);T={end:Date.now()+s*1000,tot:s};const el=$('#timer');el.className='';el.hidden=false;el.querySelector('b').textContent='';tick();tm=setInterval(tick,250)}
+function stopTimer(){clearInterval(tm);clearTimeout(hide);T=null;$('#timer').hidden=true}
+function tick(){
+  const el=$('#timer'),left=Math.ceil((T.end-Date.now())/1000);
+  if(left<=0){clearInterval(tm);T=null;navigator.vibrate?.([250,120,250]);el.className='done';el.querySelector('b').textContent='Descanso acabou. Próxima série.';el.querySelector('i').style.width='0';hide=setTimeout(stopTimer,4000);return}
+  el.querySelector('b').textContent=`Descanso ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
+  el.querySelector('i').style.width=(100-left/T.tot*100)+'%';
+}
+
+/* ---------- Evolução ---------- */
+function vEvol(){
+  const nm=new Map();S.logs.forEach(l=>nm.set(l.k,l.n));
+  if(!nm.size)return empty('Sem registros ainda','Registre séries na aba Treinar para ver a sua evolução.','Ir treinar','treinar');
+  const names=[...nm].sort((a,b)=>a[1].localeCompare(b[1],'pt')),k=nm.has(exSel)?exSel:names[0][0],ss=sessions(k),ds=Object.keys(ss).sort(),all=ds.flatMap(d=>ss[d]);
+  const best=Math.max(...all.map(l=>l.kg)),rm=Math.max(...all.map(e1rm)),mk=best===0?'rep':metric,m=MET[mk];
+  const pts=ds.map(d=>[d,rd(m[2](ss[d]))]);
+  return `<div class="row"><h2>Evolução</h2></div>
+<select data-sel="ex" aria-label="Exercício">${names.map(([id,n])=>`<option value="${id}"${id===k?' selected':''}>${esc(n)}</option>`).join('')}</select>
+<div class="chips">${Object.entries(MET).map(([id,v])=>`<button class="chip${id===mk?' on':''}" data-act="metric" data-id="${id}">${v[0]}</button>`).join('')}</div>
+<section class="card"><div class="stats"><div><span class="dim">Maior carga</span><b>${best?fk(best):'—'}</b></div><div><span class="dim">1RM estimado</span><b>${best?rd(rm)+'kg':'—'}</b></div><div><span class="dim">Treinos</span><b>${ds.length}</b></div></div>${chart(pts,m[1])}</section>
+<section class="card"><h3>Últimos treinos</h3><ul class="hist">${ds.slice(-6).reverse().map(d=>`<li><b>${fd(d)}</b> &nbsp;${ss[d].map(l=>`${l.kg}×${l.r}`).join(' · ')}</li>`).join('')}</ul></section>`;
+}
+function chart(p,u){
+  if(p.length<2)return `<p class="dim">Só há um treino registrado (${fd(p[0][0])}: ${p[0][1]} ${u}). O gráfico aparece a partir do segundo.</p>`;
+  const W=320,H=180,L=40,R=10,P=12,B=24,v=p.map(x=>x[1]);let lo=Math.min(...v),hi=Math.max(...v);
+  if(lo===hi){lo-=1;hi+=1}const pd=(hi-lo)*.1;lo=Math.max(0,lo-pd);hi+=pd;
+  const X=i=>L+i*(W-L-R)/(p.length-1),Y=y=>P+(hi-y)*(H-P-B)/(hi-lo);
+  const grid=[0,.5,1].map(f=>{const y=lo+(hi-lo)*f;return `<line x1="${L}" x2="${W-R}" y1="${Y(y)}" y2="${Y(y)}"/><text x="${L-5}" y="${Y(y)+3}" text-anchor="end">${Math.round(y)}</text>`}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de evolução em ${u}">${grid}<polyline points="${p.map((x,i)=>X(i)+','+Y(x[1])).join(' ')}"/>${p.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x[1])}" r="3"/>`).join('')}<text x="${L}" y="${H-6}">${fd(p[0][0])}</text><text x="${W-R}" y="${H-6}" text-anchor="end">${fd(p.at(-1)[0])}</text></svg>`;
+}
+
+/* ---------- Ficha ---------- */
+function vFicha(){
+  const f=F(),names=[...new Set([...S.logs.map(l=>l.n),...S.fichas.flatMap(x=>x.treinos.flatMap(t=>t.exercicios.map(e=>e.nome)))])];
+  let h=`<datalist id="exs">${names.map(n=>`<option value="${esc(n)}">`).join('')}</datalist><div class="row"><h2>Fichas</h2><button class="btn sm" data-act="newf">+ Nova ficha</button></div>`;
+  if(!S.fichas.length)h+=`<p class="dim">Cadastre a ficha que o seu personal passou. Os treinos têm nome livre: “Treino A”, “Peito e costas”, “Perna 2”…</p>`;
+  h+=`<div class="chips">${S.fichas.map(x=>`<button class="chip${x.id===S.ativa?' on':''}" data-act="usef" data-id="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`;
+  if(f){
+    h+=`<div class="row"><h3>${esc(f.nome)}</h3><span><button class="lnk" data-act="renf">Renomear</button><button class="lnk bad" data-act="delf">Excluir</button></span></div>`+f.treinos.map(treinoBox).join('')+`<button class="btn ghost" style="width:100%;margin-bottom:12px" data-act="newt">+ Novo treino</button>`;
+  }
+  const kb=Math.max(1,Math.round(JSON.stringify(S).length/1024));
+  return h+`<section class="card"><h3>Backup</h3><p class="dim">Seus dados ficam só neste aparelho (${kb} KB usados). Exporte de vez em quando para não perder nada se trocar de celular ou limpar o navegador.</p><div class="g2"><button class="btn ghost" data-act="exp">Exportar</button><button class="btn ghost" data-act="imp">Importar</button></div></section>`;
+}
+function treinoBox(t){
+  return `<section class="card"><div class="hd"><h3>${esc(t.nome)}</h3><span><button class="lnk" data-act="rent" data-t="${t.id}">Renomear</button><button class="lnk bad" data-act="delt" data-t="${t.id}">Excluir</button></span></div>`+
+  t.exercicios.map(e=>`<div class="ex"><div><b>${esc(e.nome)}</b><div class="dim">${esc(e.series)}×${esc(e.reps)}${e.descanso?` · ${e.descanso}s`:''}${e.obs?` · ${esc(e.obs)}`:''}</div></div><span class="acts"><button class="lnk" data-act="up" data-t="${t.id}" data-e="${e.id}" aria-label="Subir">↑</button><button class="lnk" data-act="down" data-t="${t.id}" data-e="${e.id}" aria-label="Descer">↓</button><button class="lnk" data-act="edit" data-t="${t.id}" data-e="${e.id}">Editar</button><button class="lnk bad" data-act="edel" data-t="${t.id}" data-e="${e.id}" aria-label="Remover">✕</button></span></div>`).join('')+
+  (form&&form.t===t.id?exForm(t):`<button class="btn ghost sm" data-act="addex" data-t="${t.id}">+ Exercício</button>`)+`</section>`;
+}
+function exForm(t){
+  const e=form.e?t.exercicios.find(x=>x.id===form.e):{};
+  return `<form data-form="ex" data-t="${t.id}" data-e="${form.e||''}"><input name="nome" list="exs" placeholder="Exercício" aria-label="Exercício" required maxlength="60" value="${esc(e.nome)}"><div class="g3"><input name="series" inputmode="numeric" placeholder="Séries" aria-label="Séries" required value="${esc(e.series)}"><input name="reps" placeholder="Reps (ex.: 8-12)" aria-label="Repetições" required value="${esc(e.reps)}"><input name="descanso" inputmode="numeric" placeholder="Desc. (s)" aria-label="Descanso em segundos" value="${esc(e.descanso||'')}"></div><input name="obs" placeholder="Observação do personal (opcional)" aria-label="Observação" maxlength="140" value="${esc(e.obs)}"><div class="g2"><button class="btn">Salvar</button><button type="button" class="btn ghost" data-act="cancel">Cancelar</button></div></form>`;
+}
+function mv(t,id,d){const a=t.exercicios,i=a.findIndex(x=>x.id===id),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];save();render()}
+function exportar(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='anilha-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function importar(file){
+  if(!file)return;
+  file.text().then(t=>{const d=JSON.parse(t);if(!Array.isArray(d.fichas)||!Array.isArray(d.logs))throw 0;if(!confirm('Substituir os dados atuais pelo backup?'))return;S={...def(),...d};save();applyTheme();render();toast('Backup importado.')}).catch(()=>toast('Arquivo de backup inválido.')).finally(()=>{$('#file').value=''});
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-act]');if(!b)return;
+  const id=b.dataset.id,f=F(),tt=b.dataset.t&&f?.treinos.find(x=>x.id===b.dataset.t),ask=(q,v)=>{const n=prompt(q,v);return n?.trim()||null};
+  const A={
+    go:()=>go(id),stop:stopTimer,theme:()=>{S.tema=S.tema==='light'?'dark':'light';save();applyTheme()},
+    pick:()=>{S.treino=id;save();render()},reg:()=>reg(b.closest('.card')),
+    del:()=>{S.logs=S.logs.filter(l=>l.id!==id);save();render()},metric:()=>{metric=id;render()},
+    newf:()=>{const n=ask('Nome da ficha (ex.: Ficha de outubro)');if(n){const x={id:uid(),nome:n,treinos:[]};S.fichas.push(x);S.ativa=x.id;S.treino=null;save();render()}},
+    usef:()=>{S.ativa=id;S.treino=null;save();render()},
+    renf:()=>{const n=ask('Novo nome da ficha',f.nome);if(n){f.nome=n;save();render()}},
+    delf:()=>{if(confirm('Excluir esta ficha? O histórico de cargas é mantido.')){S.fichas=S.fichas.filter(x=>x!==f);S.ativa=S.fichas[0]?.id??null;S.treino=null;save();render()}},
+    newt:()=>{const n=ask('Nome do treino (ex.: Treino A, Peito e tríceps)');if(n){f.treinos.push({id:uid(),nome:n,exercicios:[]});save();render()}},
+    rent:()=>{const n=ask('Novo nome do treino',tt.nome);if(n){tt.nome=n;save();render()}},
+    delt:()=>{if(confirm('Excluir este treino da ficha?')){f.treinos=f.treinos.filter(x=>x!==tt);save();render()}},
+    addex:()=>{form={t:b.dataset.t};render()},edit:()=>{form={t:b.dataset.t,e:b.dataset.e};render()},cancel:()=>{form=null;render()},
+    edel:()=>{if(confirm('Remover este exercício da ficha?')){tt.exercicios=tt.exercicios.filter(x=>x.id!==b.dataset.e);save();render()}},
+    up:()=>mv(tt,b.dataset.e,-1),down:()=>mv(tt,b.dataset.e,1),exp:exportar,imp:()=>$('#file').click()
+  };
+  A[b.dataset.act]?.();
+});
+document.addEventListener('submit',ev=>{
+  ev.preventDefault();const fm=ev.target;if(fm.dataset.form!=='ex')return;
+  const t=F().treinos.find(x=>x.id===fm.dataset.t),d=Object.fromEntries(new FormData(fm)),o={nome:d.nome.trim(),series:d.series.trim(),reps:d.reps.trim(),descanso:parseInt(d.descanso)||0,obs:d.obs.trim()};
+  if(fm.dataset.e){
+    const e=t.exercicios.find(x=>x.id===fm.dataset.e),ok=norm(e.nome),nk=norm(o.nome);
+    if(ok!==nk&&S.logs.some(l=>l.k===ok)&&confirm('Aplicar o novo nome também ao histórico de cargas?'))S.logs.forEach(l=>{if(l.k===ok){l.k=nk;l.n=o.nome}});
+    Object.assign(e,o);
+  }else t.exercicios.push({id:uid(),...o});
+  form=null;save();render();
+});
+document.addEventListener('change',ev=>{const s=ev.target;if(s.dataset.sel==='ex'){exSel=s.value;render()}else if(s.id==='file')importar(s.files[0])});
+
+function applyTheme(){document.documentElement.classList.toggle('light',S.tema==='light');$('meta[name=theme-color]').content=S.tema==='light'?'#f7f7f7':'#1b1b1b'}
+function render(){
+  $('#app').innerHTML={treinar:vTreinar,evolucao:vEvol,ficha:vFicha}[tab]();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===tab));
+}
+applyTheme();tab=F()?'treinar':'ficha';render();
+navigator.storage?.persist?.();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
