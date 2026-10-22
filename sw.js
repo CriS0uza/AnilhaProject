@@ -1,5 +1,5 @@
 // Offline: guarda o app no aparelho e atualiza em segundo plano a cada abertura.
-const C = 'anilha-v1';
+const C = 'anilha-v2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)));
